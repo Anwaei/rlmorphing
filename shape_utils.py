@@ -316,6 +316,7 @@ def generate_control_points(n_pts, r_min, r_max, radius_portion=None, angle_port
         radius_portion = np.random.rand(n_pts)
     if angle_portion is None:
         angle_portion = np.random.rand(n_pts)
+    angle_portion[0] = 0
     radius = r_min + (r_max - r_min) * radius_portion
     angle = np.linspace(0, 2*np.pi, n_pts+1)[0:-1] + 2*np.pi/n_pts * angle_portion
     x = radius * np.cos(angle)
@@ -331,7 +332,8 @@ if __name__ == '__main__':
     n_pts = 6
     r_min = 1
     r_max = 5
-    control_pts = generate_control_points(n_pts=n_pts, r_min=r_min, r_max=r_max)
+    control_pts = generate_control_points(n_pts=n_pts, r_min=r_min, r_max=r_max,
+                                          radius_portion=np.array([0.8, 0.2, 0.3, 0.4, 0.3, 0.2]))
     shape = Shape(name          ='shape',
                   control_pts   =control_pts,
                   n_control_pts =n_pts,
