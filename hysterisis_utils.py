@@ -337,7 +337,7 @@ if __name__ == '__main__':
 
     time_steps = np.arange(start=0, stop=args['time_final'], step=args['dt'])
     vol = gene_voltage_sin(time_steps)
-    T, h, gamma = hys_tan1(vol, args)
+    T, h, gamma = hys_tan2(vol, args)
     plot_hys_tan2(time_steps, T, h, gamma, vol)
 
     pass
