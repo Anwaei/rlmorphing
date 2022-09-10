@@ -325,6 +325,8 @@ def args_setting():
     args['time_final'] = 10
     args['dt'] = 0.01
 
+    args['conditions'] = [0.2, 0.35, 0.55, 0.7, 0.9]
+
     return args
 
 

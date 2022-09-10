@@ -1,6 +1,7 @@
 import gym
 from gym import spaces
 import numpy as np
+from hysterisis_utils import args_setting
 
 
 class AirfoilEnv(gym.Env):
@@ -51,11 +52,24 @@ class AirfoilEnv(gym.Env):
 
         self.dt = args['dt']
 
+        self.conditions = args['conditions']
+
+    def generate_ref(self):
+        nc = 10
+        K_each = int(self.K / nc)
+        ref = np.zeros(self.K)
+        index = np.zeros(nc)
+        for i in range(nc):
+            index[i] = np.randint(0, len(self.conditions))
+            ref[i*K_each:(i+1)*K_each] = self.conditions[index[i]]
+        return ref, index
+
     def _get_obs(self):
         return {"gamma_p": self._gamma, "T_p": self._T, "gamma": self._gamma, "T": self._T}
 
     def _get_info(self):
-        return 0
+        return {"reward": (self._gamma - self.ref[self.step_count])**2,
+                "ref_current": self.ref[self.step_count]}
 
     def reset(self, *args, seed = None, return_info = False, options = None):
         super().reset(seed=seed)
@@ -68,6 +82,9 @@ class AirfoilEnv(gym.Env):
 
         observation = self._get_obs()
         info = self._get_info()
+
+        ref, index = self.generate_ref()
+        self.ref = ref
 
         return observation, info
 
@@ -138,7 +155,7 @@ class AirfoilEnv(gym.Env):
         self._func_state_transition(action)
         observation = self._get_obs()
 
-        reward = 0
+        reward = (self._gamma - self.ref[self.step_count])**2
 
         self.step_count += 1
         terminated = self.step_count == self.K-1
@@ -146,5 +163,10 @@ class AirfoilEnv(gym.Env):
         info = self._get_info()
 
         return observation, reward, terminated, info
+
+
+if __name__ == '__main__':
+    args_airfoil = args_setting()
+    env = AirfoilEnv(args_airfoil=args_airfoil)
 
 
