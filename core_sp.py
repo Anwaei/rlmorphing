@@ -12,7 +12,6 @@ def combined_shape(length, shape=None):
         return (length,)
     return (length, shape) if np.isscalar(shape) else (length, *shape)
 
-
 def mlp(sizes, activation, output_activation=nn.Identity):
     layers = []
     for j in range(len(sizes)-1):
@@ -20,14 +19,12 @@ def mlp(sizes, activation, output_activation=nn.Identity):
         layers += [nn.Linear(sizes[j], sizes[j+1]), act()]
     return nn.Sequential(*layers)
 
-
 def count_vars(module):
     return sum([np.prod(p.shape) for p in module.parameters()])
 
 
 LOG_STD_MAX = 2
 LOG_STD_MIN = -20
-
 
 class SquashedGaussianMLPActor(nn.Module):
 
@@ -80,7 +77,6 @@ class MLPQFunction(nn.Module):
         q = self.q(torch.cat([obs, act], dim=-1))
         return torch.squeeze(q, -1) # Critical to ensure q has right shape.
 
-
 class MLPActorCritic(nn.Module):
 
     def __init__(self, observation_space, action_space, hidden_sizes=(256,256),
@@ -100,3 +96,4 @@ class MLPActorCritic(nn.Module):
         with torch.no_grad():
             a, _ = self.pi(obs, deterministic, False)
             return a.numpy()
+
